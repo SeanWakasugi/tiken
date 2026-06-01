@@ -55,6 +55,12 @@ public/assets/         静的アセット
 
 ## 公開
 
+公開URL:
+
+```text
+https://seanwakasugi.github.io/tiken/
+```
+
 `main` ブランチに push すると GitHub Actions が Astro をビルドし、GitHub Pages に公開します。
 
 GitHub Pages のプロジェクトページとして公開する前提で、`astro.config.mjs` の `base` は `/tiken` に設定しています。
