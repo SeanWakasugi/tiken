@@ -1,0 +1,19 @@
+---
+import BaseLayout from '@layouts/BaseLayout.astro';
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+---
+
+<BaseLayout title="Slides" description="tikenで公開するHTMLスライド一覧">
+  <section class="page-header">
+    <p class="eyebrow">slides</p>
+    <h1>スライド一覧</h1>
+    <p>公開可能なテーマを、HTMLスライドと発表用スクリプトで管理します。</p>
+  </section>
+
+  <section class="resource-list">
+    <a href={`${base}/slides/ai-slide-workflow/`}>
+      <strong>ChatGPTと作るHTMLスライド制作ワークフロー</strong>
+      <span>初回サンプル。話した内容を構成化し、図解・スクリプト・公開までつなげます。</span>
+    </a>
+  </section>
+</BaseLayout>

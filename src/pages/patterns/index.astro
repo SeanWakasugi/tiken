@@ -1,0 +1,20 @@
+---
+import BaseLayout from '@layouts/BaseLayout.astro';
+import FlowDiagram from '@components/FlowDiagram.astro';
+---
+
+<BaseLayout title="Patterns" description="tikenの図解パターン集">
+  <section class="page-header">
+    <p class="eyebrow">patterns</p>
+    <h1>図解パターン</h1>
+    <p>関係性、流れ、比較、優先順位、状態変化をスライドで伝えるための型を蓄積します。</p>
+  </section>
+
+  <section class="band">
+    <div class="section-heading">
+      <p class="eyebrow">sample</p>
+      <h2>フロー図</h2>
+    </div>
+    <FlowDiagram steps={['入力', '整理', '構成', '図解', '公開']} />
+  </section>
+</BaseLayout>

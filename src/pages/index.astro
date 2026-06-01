@@ -1,0 +1,44 @@
+---
+import BaseLayout from '@layouts/BaseLayout.astro';
+import FlowDiagram from '@components/FlowDiagram.astro';
+
+const workflow = ['話す', '構成化', '図解化', 'HTML化', '公開', '再利用'];
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+---
+
+<BaseLayout title="tiken">
+  <section class="hero">
+    <p class="eyebrow">HTML slide knowledge base</p>
+    <h1>構造を見せるスライドを、公開できるナレッジにする。</h1>
+    <p class="lead">
+      tiken は、HTMLスライド、発表用スクリプト、図解パターン、制作ガイドを同じリポジトリで管理するための基盤です。
+    </p>
+    <div class="actions">
+      <a class="button primary" href={`${base}/slides/ai-slide-workflow/`}>サンプルを見る</a>
+      <a class="button" href={`${base}/docs/`}>ドキュメント</a>
+    </div>
+  </section>
+
+  <section class="band">
+    <div class="section-heading">
+      <p class="eyebrow">workflow</p>
+      <h2>スライドと説明を分けて、再利用できる形に残す</h2>
+    </div>
+    <FlowDiagram steps={workflow} />
+  </section>
+
+  <section class="grid-list">
+    <a href={`${base}/slides/`}>
+      <span>Slides</span>
+      HTMLベースのスライド一覧
+    </a>
+    <a href={`${base}/docs/`}>
+      <span>Docs</span>
+      制作・公開・レビューのガイド
+    </a>
+    <a href={`${base}/patterns/`}>
+      <span>Patterns</span>
+      SVGやCSSで作る図解パターン
+    </a>
+  </section>
+</BaseLayout>

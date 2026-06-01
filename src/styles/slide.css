@@ -1,0 +1,156 @@
+:root {
+  --r-background-color: #f7f7f2;
+  --r-main-color: #1d2528;
+  --r-heading-color: #16333a;
+  --r-link-color: #16697a;
+  --r-heading-font: Inter, "Noto Sans JP", system-ui, sans-serif;
+  --r-main-font: Inter, "Noto Sans JP", system-ui, sans-serif;
+  --r-heading-letter-spacing: 0;
+  --r-heading-text-transform: none;
+}
+
+.slide-page {
+  margin: 0;
+  background: #f7f7f2;
+}
+
+.deck-home {
+  position: fixed;
+  z-index: 20;
+  top: 18px;
+  left: 22px;
+  color: #16697a;
+  font: 800 14px/1 system-ui, sans-serif;
+  text-decoration: none;
+}
+
+.reveal h1,
+.reveal h2 {
+  line-height: 1.12;
+}
+
+.deck-kicker {
+  color: #16697a;
+  font-size: 18px;
+  font-weight: 800;
+  letter-spacing: 0;
+  text-transform: uppercase;
+}
+
+.deck-lead,
+.single-message {
+  color: #59666b;
+  font-size: 34px;
+  line-height: 1.55;
+}
+
+.three-points,
+.compare {
+  display: grid;
+  gap: 24px;
+  margin-top: 48px;
+}
+
+.three-points {
+  grid-template-columns: repeat(3, 1fr);
+}
+
+.three-points span,
+.compare div {
+  min-height: 150px;
+  display: grid;
+  place-items: center;
+  padding: 24px;
+  border: 2px solid #d9ded8;
+  border-radius: 8px;
+  background: #ffffff;
+  color: #16333a;
+  font-size: 26px;
+  font-weight: 800;
+}
+
+.compare {
+  grid-template-columns: repeat(2, 1fr);
+}
+
+.compare strong {
+  color: #d96c2c;
+  font-size: 28px;
+}
+
+.compare p {
+  margin: 12px 0 0;
+  color: #59666b;
+  font-size: 24px;
+}
+
+.workflow-svg {
+  width: min(100%, 980px);
+  margin-top: 36px;
+}
+
+.workflow-svg .node rect {
+  width: 132px;
+  height: 100px;
+  rx: 8px;
+  fill: #ffffff;
+  stroke: #16697a;
+  stroke-width: 3px;
+}
+
+.workflow-svg .node text {
+  fill: #16333a;
+  font-size: 24px;
+  font-weight: 800;
+  text-anchor: middle;
+}
+
+.workflow-svg .line {
+  fill: none;
+  stroke: #d96c2c;
+  stroke-width: 5px;
+  marker-end: url(#arrow);
+  stroke-dasharray: 45;
+  stroke-dashoffset: 45;
+  animation: draw 0.8s ease forwards;
+}
+
+.workflow-svg .line:nth-of-type(2) {
+  animation-delay: 0.2s;
+}
+
+.workflow-svg .line:nth-of-type(3) {
+  animation-delay: 0.4s;
+}
+
+.workflow-svg .line:nth-of-type(4) {
+  animation-delay: 0.6s;
+}
+
+.workflow-svg marker path {
+  fill: #d96c2c;
+}
+
+.workflow-svg .caption {
+  fill: #59666b;
+  font-size: 22px;
+  text-anchor: middle;
+}
+
+@keyframes draw {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+@media (max-width: 820px) {
+  .three-points,
+  .compare {
+    grid-template-columns: 1fr;
+  }
+
+  .deck-lead,
+  .single-message {
+    font-size: 26px;
+  }
+}

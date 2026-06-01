@@ -1,0 +1,106 @@
+---
+import 'reveal.js/dist/reveal.css';
+import '@styles/slide.css';
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+---
+
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width" />
+    <title>ChatGPTと作るHTMLスライド制作ワークフロー | tiken</title>
+  </head>
+  <body class="slide-page">
+    <a class="deck-home" href={`${base}/slides/`}>Slides</a>
+    <div class="reveal">
+      <div class="slides">
+        <section>
+          <p class="deck-kicker">tiken sample deck</p>
+          <h1>ChatGPTと作る<br />HTMLスライド制作ワークフロー</h1>
+          <p class="deck-lead">話した内容を、構造・図解・スクリプト・公開へつなげる。</p>
+          <aside class="notes">
+            HTMLスライドを単発の資料ではなく、公開・蓄積・再利用できるナレッジ基盤として作ることを伝える。
+          </aside>
+        </section>
+
+        <section>
+          <p class="deck-kicker">why html</p>
+          <h2>URLで共有でき、コードとして育てられる</h2>
+          <div class="three-points">
+            <span>ブラウザで閲覧</span>
+            <span>SVGとCSSで図解</span>
+            <span>GitHubで差分管理</span>
+          </div>
+        </section>
+
+        <section>
+          <p class="deck-kicker">problem</p>
+          <h2>文字を詰め込むほど、発表は伝わりにくくなる</h2>
+          <div class="compare">
+            <div>
+              <strong>従来</strong>
+              <p>説明をスライドへ集約</p>
+            </div>
+            <div>
+              <strong>tiken</strong>
+              <p>画面は構造、詳細はスクリプト</p>
+            </div>
+          </div>
+        </section>
+
+        <section>
+          <p class="deck-kicker">workflow</p>
+          <h2>話す内容を、公開できる形へ変換する</h2>
+          <svg class="workflow-svg" viewBox="0 0 980 320" role="img" aria-label="HTMLスライド制作ワークフロー">
+            <defs>
+              <marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+                <path d="M 0 0 L 10 5 L 0 10 z"></path>
+              </marker>
+            </defs>
+            <g class="node" transform="translate(40 110)"><rect /><text x="66" y="60">話す</text></g>
+            <g class="node" transform="translate(210 110)"><rect /><text x="66" y="60">構成化</text></g>
+            <g class="node" transform="translate(380 110)"><rect /><text x="66" y="60">図解化</text></g>
+            <g class="node" transform="translate(550 110)"><rect /><text x="66" y="60">HTML化</text></g>
+            <g class="node" transform="translate(720 110)"><rect /><text x="66" y="60">公開</text></g>
+            <path class="line" d="M 172 160 H 205" />
+            <path class="line" d="M 342 160 H 375" />
+            <path class="line" d="M 512 160 H 545" />
+            <path class="line" d="M 682 160 H 715" />
+            <text class="caption" x="490" y="260">発表スクリプトは別管理し、スライドは理解の補助線にする</text>
+          </svg>
+        </section>
+
+        <section>
+          <p class="deck-kicker">rule</p>
+          <h2>1スライド1メッセージ</h2>
+          <p class="single-message">見せる情報を絞り、話す情報は script.md に逃がす。</p>
+        </section>
+
+        <section>
+          <p class="deck-kicker">next</p>
+          <h2>最初に整えるもの</h2>
+          <div class="three-points">
+            <span>スライドテンプレート</span>
+            <span>スクリプトテンプレート</span>
+            <span>公開前チェック</span>
+          </div>
+        </section>
+      </div>
+    </div>
+
+    <script>
+      import Reveal from 'reveal.js';
+
+      const deck = new Reveal({
+        hash: true,
+        controls: true,
+        progress: true,
+        center: true,
+        transition: 'fade'
+      });
+
+      deck.initialize();
+    </script>
+  </body>
+</html>
