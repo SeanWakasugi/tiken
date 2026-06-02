@@ -1,0 +1,414 @@
+---
+import 'reveal.js/dist/reveal.css';
+import '@styles/slide.css';
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+const assetBase = `${base}/assets/slides/llm-translation-localization-api`;
+const serverKeeps = `[
+  { "type": "tag", "value": "<p>" },
+  { "type": "tag", "value": "<strong>" },
+  { "type": "tag", "value": "</strong>" },
+  { "type": "attribute", "value": "href=https://example.com" },
+  { "type": "token", "value": "{{user_name}}" },
+  { "type": "tag", "value": "</p>" }
+]`;
+const llmSegments = `[
+  { "index": 0, "text": "山田太郎さんの新曲" },
+  { "index": 1, "text": "TARO's ballad" },
+  { "index": 2, "text": "こちら" },
+  { "index": 3, "text": "から確認できます。" }
+]`;
+---
+
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width" />
+    <title>LLMを使ったアプリのローカライズ | tiken</title>
+  </head>
+  <body class="slide-page">
+    <a class="deck-home" href={`${base}/slides/`}>Slides</a>
+    <div class="reveal">
+      <div class="slides">
+        <section>
+          <p class="deck-kicker">localization api</p>
+          <h1>LLMを使った<br />アプリのローカライズ</h1>
+          <p class="deck-lead">LLMをバックエンドとして利用するための品質保証</p>
+          <aside class="notes">
+            今回は、LLMを翻訳エンジンとして使ったアプリ内ローカライズで、品質をどう保証したかを話す。
+            ポイントは、LLMの自然さを活かしつつ、壊れてはいけない構造や固有名詞をサーバー側で検証できる形にすること。
+          </aside>
+        </section>
+
+        <section>
+          <p class="deck-kicker">background</p>
+          <h2>元々の課題は、翻訳精度だけではなかった</h2>
+          <div class="issue-grid" aria-label="元々の4つの課題">
+            <article>
+              <span>01</span>
+              <strong>HTMLを含む文章</strong>
+              <p>タグ、リンク、改行、装飾を壊さず、見える本文だけを翻訳する。</p>
+            </article>
+            <article>
+              <span>02</span>
+              <strong>固有名詞</strong>
+              <p>人名、企業名、ファンクラブ名、イベント名、作品名を誤訳しない。</p>
+            </article>
+            <article>
+              <span>03</span>
+              <strong>話し言葉</strong>
+              <p>カジュアルな文体、距離感、ニュアンス、ダジャレを自然に伝える。</p>
+            </article>
+            <article>
+              <span>04</span>
+              <strong>原文併記</strong>
+              <p>固有名詞は翻訳後も日本語原文を確認できる余地を残す。</p>
+            </article>
+          </div>
+          <aside class="notes">
+            背景として、単純な翻訳APIを作るだけでは足りなかった。
+            まずHTMLを含む文章があるので、タグやリンクを壊せない。
+            次にファンクラブアプリでは固有名詞の誤訳が許容されにくい。
+            さらにチャットやお知らせでは、話し言葉やファン向けの柔らかい文体が多く、直訳だと不自然になる。
+            後からは、固有名詞に日本語原文を併記したいという要件も追加された。
+          </aside>
+        </section>
+
+        <section>
+          <p class="deck-kicker">problem</p>
+          <h2>1つのHTMLに、翻訳対象と保護対象が混在する</h2>
+          <div class="mixed-string" aria-label="翻訳する本文、固有名詞、そのまま保持する構造と値">
+            <pre><code>&lt;p&gt;
+  <mark class="noun">山田太郎</mark><mark class="copy">さんの新曲</mark>
+  &lt;strong&gt;<mark class="noun">TARO's ballad</mark>&lt;/strong&gt;<mark class="copy">は</mark>
+  &lt;a href="<mark class="protect">https://example.com</mark>"&gt;<mark class="copy">こちら</mark>&lt;/a&gt;<mark class="copy">から確認できます。</mark>
+  <mark class="protect">{'{{user_name}}'}</mark>
+&lt;/p&gt;</code></pre>
+            <div class="string-legend">
+              <span class="copy-dot">翻訳する本文</span>
+              <span class="noun-dot">固有名詞</span>
+              <span class="protect-dot">そのまま保持する構造・値</span>
+            </div>
+          </div>
+          <aside class="notes">
+            問題は、翻訳対象と保護対象が同じ文字列に混ざっていること。
+            「さんの新曲は」「こちら」「から確認できます。」は普通に翻訳する本文。
+            山田太郎やTARO's balladは固有名詞として扱う。
+            HTMLタグ、URL、テンプレート変数はそのまま保持する。
+            この分類を曖昧にしたままLLMへ渡すと、タグが壊れたり、URLが変形されたり、固有名詞の表記が揺れたりする。
+          </aside>
+        </section>
+
+        <section>
+          <p class="deck-kicker">principle</p>
+          <h2>HTML全体ではなく、編集してよい配列だけを渡す</h2>
+          <div class="split-arrays" aria-label="サーバーが保持する構造とLLMへ渡す本文配列">
+            <div class="array-card keep">
+              <p class="zone-label">server keeps</p>
+              <pre><code>{serverKeeps}</code></pre>
+            </div>
+            <div class="array-card edit">
+              <p class="zone-label">LLM input</p>
+              <pre><code>{llmSegments}</code></pre>
+            </div>
+          </div>
+          <p class="single-message compact">LLMの編集権限を、index付きの本文セグメントに限定する。</p>
+          <aside class="notes">
+            原則は、LLMにHTML全体を編集させないこと。
+            サーバー側ではHTMLタグ、属性、URL、テンプレート変数などを保持する。
+            LLMには正規化した本文セグメントだけをindex付き配列として渡す。
+            こうすると、翻訳結果を元の位置へ戻せるし、segment数やindexが一致しているかも機械的に確認できる。
+          </aside>
+        </section>
+
+        <section>
+          <p class="deck-kicker">fixed terms</p>
+          <h2>固定訳はLLMに頼らず、先にトークン化する</h2>
+          <div class="masking-stage" aria-label="固定訳をトークン化してLLMから隠す">
+            <div class="mask-strip before">
+              <p class="zone-label">source</p>
+              <span><b>どうぶつの森</b>で遊ぶ</span>
+            </div>
+            <div class="mask-strip hidden">
+              <p class="zone-label">LLM sees</p>
+              <span><b>{'{{KT_001}}'}</b>で遊ぶ</span>
+            </div>
+            <div class="mask-strip after">
+              <p class="zone-label">server restores</p>
+              <span>Play <b>Animal Crossing</b></span>
+            </div>
+          </div>
+          <p class="single-message compact">決まっている表記は、翻訳対象として見せない。</p>
+          <aside class="notes">
+            順番として、固定訳があるものは先に処理する。
+            すでに決まっているファンクラブ名やサービス名は、LLMに「この通り訳して」と頼るより、トークンに置き換えてから渡す方が確実。
+            出力後にサーバー側で固定訳へ戻すので、表記ゆれや意訳を避けやすい。
+          </aside>
+        </section>
+
+        <section>
+          <p class="deck-kicker">proper nouns</p>
+          <h2>固有名詞はLLMに抽出させ、翻訳ポリシーを選ばせる</h2>
+          <div class="noun-flow" aria-label="固有名詞抽出と翻訳ポリシー選択">
+            <div>
+              <p class="zone-label">source</p>
+              <strong>山田太郎さんの新曲 TARO's ballad</strong>
+            </div>
+            <b aria-hidden="true">→</b>
+            <div>
+              <p class="zone-label">LLMによる固有名詞抽出</p>
+              <ul>
+                <li>山田太郎: 漢字 / 人名</li>
+                <li>TARO's ballad: タイトル / アルファベット</li>
+              </ul>
+            </div>
+            <b aria-hidden="true">→</b>
+            <div>
+              <p class="zone-label">LLMによる翻訳ポリシー選択</p>
+              <ul>
+                <li>漢字の人名は、音写する</li>
+                <li>アルファベットのタイトルは、翻訳しないでそのまま</li>
+              </ul>
+            </div>
+          </div>
+          <aside class="notes">
+            固有名詞は、こちらで完全な辞書を先に持てない場合もある。
+            そこでLLMに本文から固有名詞を抽出させ、その固有名詞ごとに翻訳ポリシーを選ばせる。
+            重要なのは、翻訳本文だけではなく、抽出した固有名詞と選んだポリシーも出力させること。
+            後段で原文併記や検証を機械的に行うための材料になる。
+          </aside>
+        </section>
+
+        <section>
+          <p class="deck-kicker">policy</p>
+          <h2>ポリシーは列挙し、後段で検査できる形にする</h2>
+          <table class="policy-table" aria-label="固有名詞の翻訳ポリシー">
+            <thead>
+              <tr>
+                <th>対象</th>
+                <th>翻訳結果への要求</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>日本語タイトル</td>
+                <td>直訳し、初出だけ原文併記</td>
+              </tr>
+              <tr>
+                <td>英字タイトル</td>
+                <td>原文表記のまま、括弧なし</td>
+              </tr>
+              <tr>
+                <td>英字の人名・組織名</td>
+                <td>原文表記のまま、括弧なし</td>
+              </tr>
+              <tr>
+                <td>漢字の人名・組織名</td>
+                <td>対象言語へ寄せ、初出だけ原文併記</td>
+              </tr>
+              <tr>
+                <td>かなの人名・組織名</td>
+                <td>音写し、初出だけ原文併記</td>
+              </tr>
+            </tbody>
+          </table>
+          <aside class="notes">
+            ポリシーは最低限このように列挙する。
+            作品やイベントタイトルか、人名や組織名か。
+            日本語表記かアルファベット表記か、漢字か、かなか。
+            それぞれに対して、翻訳するのか、保持するのか、原文併記を付けるのかを決める。
+            notificationのように併記しないフィールドは例外として扱う。
+          </aside>
+        </section>
+
+        <section>
+          <p class="deck-kicker">structured output</p>
+          <h2>固有名詞と翻訳本文を一緒に出力させる</h2>
+          <div class="json-card wide">
+            <pre><code>{`{
+  "proper_nouns": [
+    {
+      "source": "山田太郎",
+      "policy": "漢字の人名は音写する",
+      "translation": "Taro Yamada"
+    },
+    {
+      "source": "TARO's ballad",
+      "policy": "アルファベットのタイトルはそのまま",
+      "translation": "TARO's ballad"
+    }
+  ],
+  "segments": [
+    { "index": 0, "text": "Taro Yamada（山田太郎）'s new song" },
+    { "index": 1, "text": "TARO's ballad" },
+    { "index": 2, "text": "here" },
+    { "index": 3, "text": "can be checked from." }
+  ]
+}`}</code></pre>
+          </div>
+          <aside class="notes">
+            出力は、翻訳本文だけでなく、固有名詞一覧も同じJSONに含める。
+            これで後段の処理ができる。
+            たとえば、山田太郎には原文併記が付いているか。
+            TARO's balladは英字タイトルなので翻訳されず、そのまま残っているか。
+            segmentのindexが維持されているか。
+            こうした検査を、LLMの文章出力を読むのではなく、構造化データに対して行える。
+          </aside>
+        </section>
+
+        <section>
+          <p class="deck-kicker">source note</p>
+          <h2>原文併記は、固有名詞抽出の結果を使って後処理する</h2>
+          <div class="name-trace" aria-label="原文併記により翻訳後も元の固有名詞を確認できる">
+            <div class="trace-card lost">
+              <p class="zone-label">translation only</p>
+              <strong>Taro Yamada</strong>
+              <span>読み方が誤っていても元の漢字へ戻れない</span>
+            </div>
+            <div class="trace-card kept">
+              <p class="zone-label">with source</p>
+              <strong>Taro Yamada（山田太郎）</strong>
+              <span>検索・確認できる手がかりを残せる</span>
+            </div>
+          </div>
+          <aside class="notes">
+            原文併記は、固有名詞の抽出結果があるから機械的に処理できる。
+            特に漢字の人名は読み方が一意に決まらない。
+            LLMが音写を間違えても、翻訳後の文字列だけだと元の日本語が何だったか分からない。
+            Taro Yamada（山田太郎）のように初出だけ併記すると、ユーザーが元の単語を検索・確認できる余地を残せる。
+          </aside>
+        </section>
+
+        <section>
+          <p class="deck-kicker">context</p>
+          <h2>チャットは前後の発言を文脈として渡す</h2>
+          <div class="chat-context" aria-label="前後のチャットを文脈として送る">
+            <div class="chat-bubble muted">明日の配信、22時からだよ</div>
+            <div class="chat-bubble muted">間に合うかな</div>
+            <div class="chat-bubble active">仕事終わりならギリかも</div>
+            <div class="context-result">
+              <p class="zone-label">translation target</p>
+              <strong>仕事終わりならギリかも</strong>
+              <span>If it is after work, you might just make it.</span>
+            </div>
+          </div>
+          <aside class="notes">
+            日本語は主語や目的語が落ちやすいので、単文だけだと何の話か分からないことが多い。
+            チャットでは、翻訳対象の前後の発言も文脈としてLLMに送る。
+            この例だと「仕事終わりならギリかも」だけでは、何に間に合うのか、誰に向けた返事なのかが曖昧。
+            前後に配信時間の話と「間に合うかな」という発言があるので、英語では「If it is after work, you might just make it.」のように訳せる。
+          </aside>
+        </section>
+
+        <section>
+          <p class="deck-kicker">image context</p>
+          <h2>写真コメントは、画像そのものを文脈として渡す</h2>
+          <div class="image-context" aria-label="同じコメントでも画像により訳が変わる例">
+            <figure>
+              <img src={`${assetBase}/mapo-tofu-context.png`} alt="麻婆豆腐の写真" />
+              <figcaption><b>辛かった〜</b><span>It was hot.</span></figcaption>
+            </figure>
+            <figure>
+              <img src={`${assetBase}/mountain-context.png`} alt="登山中の写真" />
+              <figcaption><b>辛かった〜</b><span>It was hard.</span></figcaption>
+            </figure>
+          </div>
+          <aside class="notes">
+            写真のコメントでは、画像がないと意味が分からないコメントがある。
+            「辛かった〜」は、麻婆豆腐の写真なら辛い、つまりhot。
+            登山の写真なら大変だった、つまりhard。
+            そこで、コメントだけではなく画像もLLMに読ませ、画像のコメントであることを前提に翻訳させる。
+          </aside>
+        </section>
+
+        <section>
+          <p class="deck-kicker">natural chat</p>
+          <h2>話し言葉は、正確さだけでなく意図も訳す</h2>
+          <div class="translation-compare" aria-label="機械翻訳と意図を含む翻訳の比較">
+            <div class="source">
+              <p class="zone-label">日本語チャット</p>
+              <strong>二十代もあと一ヶ月切りました！<br />NiziU代。なんちゃって笑</strong>
+            </div>
+            <div class="bad">
+              <p class="zone-label">機械翻訳</p>
+              <span>NiZiU generation. what is it lol</span>
+            </div>
+            <div class="good">
+              <p class="zone-label">LLM翻訳</p>
+              <span>Nizi-Youth. Just kidding, lol.</span>
+            </div>
+          </div>
+          <aside class="notes">
+            チャットでは、単に意味が正しいだけでは足りない。
+            「二十代」と「NiziU代」をかけている意図がある。
+            機械翻訳だと、NiZiU generationのように、急に何が出てきたのか分からない訳になる。
+            LLMにダジャレの意図も含めて訳させると、Nizi-Youthのように、完全ではなくても言葉遊びとして伝わる可能性がある。
+            「なんちゃって笑」も Just kidding, lol. の方が自然。
+          </aside>
+        </section>
+
+        <section>
+          <p class="deck-kicker">natural chat</p>
+          <h2>崩した口調も、文体として翻訳対象にする</h2>
+          <div class="translation-compare" aria-label="口調を含めたチャット翻訳の比較">
+            <div class="source">
+              <p class="zone-label">日本語チャット</p>
+              <strong>ボクの、インスタライブは見てくれたカナ<br />微妙な時間でごめんネ</strong>
+            </div>
+            <div class="bad">
+              <p class="zone-label">機械翻訳</p>
+              <span>Did you see my Instagram Live, Kana?<br />Sorry for the subtle time.</span>
+            </div>
+            <div class="good">
+              <p class="zone-label">LLM翻訳</p>
+              <span>Did ya catch my Insta live, I wonder?!<br />Sorry for the awkward timing.</span>
+            </div>
+          </div>
+          <aside class="notes">
+            もう一つの例は、崩した口調そのものをどう扱うか。
+            「見てくれたカナ」「ごめんネ」のような文体は、正規化して訳すだけだと距離感が変わる。
+            逆に文字通り訳すと、Kanaという人名のように誤訳されることもある。
+            LLMには、この口調がユーモアを含んだカジュアルな文体であることも含めて翻訳させる。
+          </aside>
+        </section>
+
+        <section>
+          <p class="deck-kicker">summary</p>
+          <h2>LLM翻訳は、検証できるローカライズパイプラインとして設計する</h2>
+          <div class="pipeline-summary revised" aria-label="LLMローカライズパイプライン">
+            <span>固定訳を保護</span>
+            <span>HTMLを分解</span>
+            <span>本文と文脈を送信</span>
+            <span>固有名詞と本文を出力</span>
+            <span>原文併記と検査</span>
+            <span>構造へ復元</span>
+          </div>
+          <p class="single-message compact">自然さはLLMに、保証できることはサーバーに寄せる。</p>
+          <aside class="notes">
+            まとめると、LLMは翻訳APIとして単体で使うのではなく、検証できるパイプラインの一部として使う。
+            固定訳は先に保護する。
+            HTMLは分解して、翻訳対象の本文だけを渡す。
+            チャットや写真では、前後の発言や画像も文脈として渡す。
+            固有名詞はLLMに抽出させ、ポリシーと翻訳本文を構造化して出力させる。
+            最後にサーバー側で原文併記、固定訳、固有名詞、index、保護対象を検査してから復元する。
+            LLMには自然な翻訳を任せ、保証できることはサーバー側に寄せる、というのが今回の設計です。
+          </aside>
+        </section>
+      </div>
+    </div>
+
+    <script>
+      import Reveal from 'reveal.js';
+
+      const deck = new Reveal({
+        hash: true,
+        controls: true,
+        progress: true,
+        center: true,
+        transition: 'fade'
+      });
+
+      deck.initialize();
+    </script>
+  </body>
+</html>
