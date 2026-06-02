@@ -1,10 +1,10 @@
-# tiken
+# :知見:
 
 HTML / CSS / SVG / JavaScript を使って、公開可能なスライド、発表用スクリプト、図解パターン、ナレッジを蓄積するための Astro ベースの静的サイトです。
 
 ## 目的
 
-tiken は、文字を詰め込んだ資料ではなく、構造・関係性・変化・判断軸を視覚的に伝える HTML スライドを作り、GitHub Pages で公開・再利用できる形に整えることを目的にしています。
+:知見: は、文字を詰め込んだ資料ではなく、構造・関係性・変化・判断軸を視覚的に伝える HTML スライドを作り、GitHub Pages で公開・再利用できる形に整えることを目的にしています。
 
 ## ローカル実行
 
@@ -64,7 +64,3 @@ https://seanwakasugi.github.io/tiken/
 `main` ブランチに push すると GitHub Actions が Astro をビルドし、GitHub Pages に公開します。
 
 GitHub Pages のプロジェクトページとして公開する前提で、`astro.config.mjs` の `base` は `/tiken` に設定しています。
-
-## ライセンス
-
-未定です。公開前にコンテンツとコードのライセンス方針を決めてください。
