@@ -15,3 +15,7 @@ declare module 'reveal.js' {
     initialize(): Promise<void>;
   }
 }
+
+declare module 'reveal.js/dist/reveal.esm.js' {
+  export { default } from 'reveal.js';
+}

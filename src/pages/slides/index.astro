@@ -3,13 +3,7 @@ import BaseLayout from '@layouts/BaseLayout.astro';
 const base = import.meta.env.BASE_URL.replace(/\/$/, '');
 ---
 
-<BaseLayout title="Slides" description="tikenで公開するHTMLスライド一覧">
-  <section class="page-header">
-    <p class="eyebrow">slides</p>
-    <h1>スライド一覧</h1>
-    <p>公開可能なテーマを、HTMLスライドと発表用スクリプトで管理します。</p>
-  </section>
-
+<BaseLayout title="知見一覧" description="tikenで公開する知見一覧">
   <section class="resource-list">
     <a href={`${base}/slides/llm-translation-localization-api/`}>
       <strong>LLMを使った翻訳ローカライズAPIの知見</strong>

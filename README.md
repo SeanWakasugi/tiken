@@ -1,10 +1,10 @@
-# :知見:
+# ![知見](public/assets/favicon.svg)
 
-HTML / CSS / SVG / JavaScript を使って、公開可能なスライド、発表用スクリプト、図解パターン、ナレッジを蓄積するための Astro ベースの静的サイトです。
+HTML / CSS / SVG / JavaScript を使って、公開可能な知見を蓄積するための Astro ベースの静的サイトです。
 
 ## 目的
 
-:知見: は、文字を詰め込んだ資料ではなく、構造・関係性・変化・判断軸を視覚的に伝える HTML スライドを作り、GitHub Pages で公開・再利用できる形に整えることを目的にしています。
+tiken は、文字を詰め込んだ資料ではなく、構造・関係性・変化・判断軸を視覚的に伝える知見を作り、GitHub Pages で公開・再利用できる形に整えることを目的にしています。
 
 ## ローカル実行
 
@@ -26,8 +26,6 @@ docs/                  仕様、ガイド、運用ルール、実装計画
 docs/plans/            1セッションで完了できる単位の作業計画
 src/pages/             Astro の公開ページ
 src/pages/slides/      HTMLスライドと発表用スクリプト
-src/pages/docs/        公開サイト上のドキュメントページ
-src/pages/patterns/    図解パターンのサンプル
 src/components/        再利用コンポーネント
 src/layouts/           ページレイアウト
 src/styles/            グローバルCSS、スライドCSS、図解CSS

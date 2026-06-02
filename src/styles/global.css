@@ -36,27 +36,21 @@ main {
 .site-header {
   display: flex;
   align-items: center;
-  justify-content: space-between;
   width: min(1120px, calc(100% - 40px));
   margin: 0 auto;
   padding: 20px 0;
 }
 
 .brand {
-  font-weight: 800;
-  font-size: 22px;
+  display: inline-flex;
+  align-items: center;
   text-decoration: none;
 }
 
-nav {
-  display: flex;
-  gap: 18px;
-  color: var(--muted);
-  font-size: 14px;
-}
-
-nav a {
-  text-decoration: none;
+.brand img {
+  width: 72px;
+  height: auto;
+  display: block;
 }
 
 .hero {
@@ -199,9 +193,7 @@ h2 {
 
 @media (max-width: 720px) {
   .site-header {
-    align-items: flex-start;
-    gap: 14px;
-    flex-direction: column;
+    width: min(100% - 28px, 1120px);
   }
 
   main {
