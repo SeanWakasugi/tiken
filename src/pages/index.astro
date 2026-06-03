@@ -1,18 +1,19 @@
 ---
 import BaseLayout from '@layouts/BaseLayout.astro';
+import { slides } from '../lib/slides';
 
 const base = import.meta.env.BASE_URL.replace(/\/$/, '');
 ---
 
 <BaseLayout title="知見一覧" description="tikenで公開する知見一覧">
   <section class="resource-list">
-    <a href={`${base}/slides/llm-translation-localization-api/`}>
-      <strong>LLMを使った翻訳ローカライズAPIの知見</strong>
-      <span>HTML構造、固有名詞、固定訳、原文併記をLLMとサーバー側の役割分担で扱う設計知見。</span>
-    </a>
-    <a href={`${base}/slides/ai-slide-workflow/`}>
-      <strong>ChatGPTと作るHTMLスライド制作ワークフロー</strong>
-      <span>初回サンプル。話した内容を構成化し、図解・スクリプト・公開までつなげます。</span>
-    </a>
+    {
+      slides.map((slide) => (
+        <a href={`${base}${slide.href}`}>
+          <strong>{slide.title}</strong>
+          <span>{slide.description}</span>
+        </a>
+      ))
+    }
   </section>
 </BaseLayout>

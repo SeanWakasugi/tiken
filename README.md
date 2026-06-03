@@ -40,6 +40,10 @@ public/assets/         静的アセット
 4. 詳細説明は `script.md` に分離する
 5. 公開前に [レビュー・公開チェックリスト](docs/review-checklist.md) を通す
 
+スライド一覧は `src/lib/slides.ts` が `src/pages/slides/*/index.astro` を自動収集します。トップページと `/slides/` に手動でリンクを追加する必要はありません。一覧のタイトルはスライドページの `<title>`、説明文は最初の `.deck-lead` から取得されます。
+
+スライド実装の詳細は [ローカル開発環境](docs/local-development.md) と [コンテンツ制作ガイド](docs/content-guidelines.md) を参照してください。
+
 ## ドキュメント
 
 - [プロジェクト仕様](docs/specification.md)

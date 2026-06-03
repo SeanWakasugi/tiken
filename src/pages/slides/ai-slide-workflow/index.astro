@@ -93,6 +93,9 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '');
       import Reveal from 'reveal.js/dist/reveal.esm.js';
 
       const deck = new Reveal({
+        width: 1920,
+        height: 1400,
+        margin: 0.04,
         hash: true,
         controls: true,
         progress: true,

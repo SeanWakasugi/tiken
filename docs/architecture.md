@@ -49,10 +49,40 @@ src/pages/slides/<slug>/
 
 スライド本体には、表示する結論、短い文、図解、最低限の補足だけを置きます。背景説明、具体例、話す順番、補足は `script.md` に分離します。
 
+スライド一覧は `src/lib/slides.ts` が `src/pages/slides/*/index.astro` をビルド時に自動収集します。トップページと `/slides/` は同じ一覧データを使うため、新しいスライドを追加しても一覧ページを手で更新しません。
+
+一覧で使うメタデータ:
+
+- タイトル: 各スライドページの `<title>` から `| tiken` を除いた文字列
+- 説明文: 最初の `.deck-lead`
+- URL: `src/pages/slides/<slug>/index.astro` の `<slug>`
+
+## reveal.js の既定設定
+
+各スライドの `new Reveal(...)` は次の基準で初期化します。
+
+```ts
+const deck = new Reveal({
+  width: 1920,
+  height: 1400,
+  margin: 0.04,
+  hash: true,
+  controls: true,
+  progress: true,
+  center: true,
+  transition: 'fade'
+});
+```
+
+`1920x1400` は reveal.js 標準の `960x700` と同じアスペクト比を保った 2 倍解像度です。Retina など高密度ディスプレイで文字がぼけにくいように、このサイズを既定にします。
+
+`src/styles/slide.css` はこの 2 倍基準に合わせています。通常の HTML/CSS レイアウトで使う `px` や `vw` は 2 倍基準で指定します。一方、SVG の `viewBox` 内部座標に属する `rect width`、`height`、`rx`、`text font-size`、`stroke-width` などは `viewBox` の座標系に対する値なので、2 倍化しません。SVG 全体の表示サイズだけを CSS で調整します。
+
 ## コンポーネント方針
 
 - `src/layouts/`: ページ全体の枠組み
 - `src/components/`: 再利用できるUIや図解
+- `src/lib/slides.ts`: スライド一覧の自動収集
 - `src/styles/global.css`: 通常ページの共通スタイル
 - `src/styles/slide.css`: reveal.jsスライド用スタイル
 

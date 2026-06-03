@@ -3,6 +3,9 @@
 
 declare module 'reveal.js' {
   export interface RevealOptions {
+    width?: number;
+    height?: number;
+    margin?: number;
     hash?: boolean;
     controls?: boolean;
     progress?: boolean;
