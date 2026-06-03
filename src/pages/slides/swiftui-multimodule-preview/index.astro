@@ -1,0 +1,337 @@
+---
+import 'reveal.js/dist/reveal.css';
+import '@styles/slide.css';
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+---
+
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width" />
+    <title>SwiftUI Previewを速くするマルチモジュール化 | tiken</title>
+  </head>
+  <body class="slide-page">
+    <a class="deck-home" href={`${base}/slides/`}>Slides</a>
+    <div class="reveal">
+      <div class="slides">
+        <section class="mm-title-slide">
+          <p class="deck-kicker">multimodule swiftui</p>
+          <h1>SwiftUI Previewを速くする<br />マルチモジュール化</h1>
+          <p class="deck-lead">Feature + DesignSystemから小さく始めた話</p>
+          <aside class="notes">
+            今日は、アプリ全体を大きく作り替えた話ではなく、一部のFeatureを切り出してPreview改善を試した話をします。
+            きっかけはPreviewの待ち時間でしたが、結果として責務分割やリソース管理、再利用の見通しもよくなりました。
+          </aside>
+        </section>
+
+        <section>
+          <p class="section-tag">Preview Speed</p>
+          <h2>待ち時間が、明確に減った</h2>
+          <div class="mm-speed-hero" aria-label="SwiftUI Preview速度の改善">
+            <article class="mm-speed-metric">
+              <p>完全初回ビルド</p>
+              <div><span>87秒</span><b>→</b><strong>33秒</strong></div>
+              <small>約2.6倍速</small>
+            </article>
+            <article class="mm-speed-metric fragment" data-fragment-index="1">
+              <p>ビルド後の別ファイル選択</p>
+              <div><span>17秒</span><b>→</b><strong>5秒</strong></div>
+              <small>約3.4倍速</small>
+            </article>
+            <article class="mm-speed-metric fragment" data-fragment-index="2">
+              <p>コード内の変更</p>
+              <div><span>5秒</span><b>→</b><strong>1秒</strong></div>
+              <small>約5倍速</small>
+            </article>
+          </div>
+          <aside class="notes">
+            まず一番わかりやすい効果は、Previewの待ち時間が減ったことです。
+            完全初回ビルド、ビルド後に別ファイルを選んだとき、コードを少し直したときで、待ち時間がそれぞれ短くなりました。
+            ここでは測定条件を細かく説明するより、Previewの待ち時間が実用上かなり減ったことを押さえます。
+          </aside>
+        </section>
+
+        <section>
+          <p class="section-tag">Preview Speed</p>
+          <h2>Preview対象が、アプリ全体に広がっていた</h2>
+          <div class="mm-before-flow" aria-label="PreviewがApp全体を巻き込む構造">
+            <div class="mm-flow-source">
+              <p class="zone-label">preview want</p>
+              <strong>TutorialScreenだけ見たい</strong>
+            </div>
+            <div class="mm-flow-chain">
+              <span>App Target</span>
+              <span>UIKit Root</span>
+              <span>Startup Work</span>
+              <span>Other Features</span>
+            </div>
+          </div>
+          <p class="single-message compact">遅さの原因は、見たい画面よりビルド対象が大きいこと。</p>
+          <aside class="notes">
+            本当に見たいのはTutorialScreenだけなのに、依存の入口がApp本体側にありました。
+            そのため、SwiftUI Previewのつもりでも、UIKitベースのルートや起動処理、他機能まで巻き込んでいました。
+            Preview対象が大きいと、画面ひとつを確認したいだけでも、毎回重い構成を見にいくことになります。
+          </aside>
+        </section>
+
+        <section>
+          <p class="section-tag">Preview Speed</p>
+          <h2>TutorialFeatureだけをビルドしてPreviewする</h2>
+          <div class="mm-preview-scope" aria-label="Feature単体でPreviewする構成">
+            <div class="mm-app-frame">
+              <span>App</span>
+              <small>Preview経路から外す</small>
+            </div>
+            <div class="mm-preview-center">
+              <div class="mm-module-card strong">
+                <p class="zone-label">preview target</p>
+                <strong>TutorialFeature</strong>
+                <span>画面をここで閉じる</span>
+              </div>
+              <div class="mm-module-card">
+                <p class="zone-label">dependency</p>
+                <strong>DesignSystem</strong>
+                <span>共有UIと資産</span>
+              </div>
+            </div>
+          </div>
+          <aside class="notes">
+            今回は、TutorialFeatureを独立したモジュールとして切り出し、PreviewもFeature側で完結させました。
+            App本体の起動処理やUIKitルートを通らないので、SwiftUI Previewが見る範囲を小さくできます。
+            まずは一つの画面から始めて、改善が効くことを確認しました。
+          </aside>
+        </section>
+
+        <section>
+          <p class="section-tag">Responsibility</p>
+          <h2>画面に関するものを、Featureの中に置く</h2>
+          <div class="mm-feature-box" aria-label="TutorialFeatureの責務">
+            <div class="mm-feature-header">TutorialFeature</div>
+            <div class="mm-feature-parts">
+              <span>Screen</span>
+              <span>View</span>
+              <span>ViewModel</span>
+              <span>Route</span>
+            </div>
+            <p>画面・状態・表示ロジックをFeature内に閉じ込める。</p>
+          </div>
+          <aside class="notes">
+            次の効果は、責務がまとまることです。
+            Featureには、Screen、View、ViewModel、Routeのような画面に関する要素をまとめます。
+            こうしておくと、画面の都合や状態管理、表示ロジックがAppターゲットに散らばりません。
+          </aside>
+        </section>
+
+        <section>
+          <p class="section-tag">Responsibility</p>
+          <h2>importできる範囲が、設計上の境界になる</h2>
+          <div class="mm-boundary-compare" aria-label="単一ターゲットとモジュール境界の比較">
+            <div class="mm-boundary-card messy">
+              <p class="zone-label">single target</p>
+              <strong>何でも参照できる</strong>
+              <div>
+                <span>View</span>
+                <span>App</span>
+                <span>OtherFeature</span>
+                <span>Service</span>
+                <span>Assets</span>
+              </div>
+            </div>
+            <div class="mm-boundary-card clean">
+              <p class="zone-label">modules</p>
+              <strong>参照範囲が境界になる</strong>
+              <div>
+                <span>TutorialFeature</span>
+                <b>→</b>
+                <span>DesignSystem</span>
+                <span>Domain Interface</span>
+              </div>
+            </div>
+          </div>
+          <p class="single-message compact">「触らないようにする」ではなく、触れない構造にする。</p>
+          <aside class="notes">
+            ここで大事なのは、ルールで我慢することではなく、構造で守ることです。
+            単一ターゲットだと、気をつけていてもいろいろなものに触れやすいです。
+            一方でマルチモジュールにすると、importできる範囲がそのまま境界になります。
+            この機能が何に依存しているかも、Package定義やimportから見えるようになります。
+          </aside>
+        </section>
+
+        <section>
+          <p class="section-tag">Resources</p>
+          <h2>共有資産の置き場所を、DesignSystemに決める</h2>
+          <div class="mm-design-hub" aria-label="DesignSystemに共有リソースを集約する">
+            <div class="mm-app-assets">
+              <strong>App Assets</strong>
+              <span>Featureから直接参照しない</span>
+            </div>
+            <div class="mm-hub-center">
+              <strong>DesignSystem</strong>
+            </div>
+            <div class="mm-hub-items">
+              <span>Color</span>
+              <span>Image</span>
+              <span>Font</span>
+              <span>Icon</span>
+              <span>Component</span>
+            </div>
+          </div>
+          <aside class="notes">
+            共有資産は、DesignSystemに集めると整理しやすくなります。
+            Color、Image、Font、Icon、Componentのような共通要素は、Featureからimportして使える場所に置くのが自然です。
+            逆に、App本体のAsset CatalogをFeatureから直接参照する形だと、共有なのか機能固有なのかが分かりにくくなります。
+          </aside>
+        </section>
+
+        <section>
+          <p class="section-tag">Resources</p>
+          <h2>Feature固有の文言と画像は、Feature内で管理する</h2>
+          <div class="mm-resource-tree" aria-label="TutorialFeatureのリソース構成">
+            <div class="mm-tree">
+              <strong>TutorialFeature</strong>
+              <span>Resources</span>
+              <span>Localizable.xcstrings</span>
+              <span>Images</span>
+            </div>
+          </div>
+          <p class="single-message compact">文言と画像を、その機能の近くに置く。</p>
+          <aside class="notes">
+            チュートリアル固有の文言や画像は、Featureの中で管理した方が扱いやすいです。
+            SwiftUIの文字列抽出を使えば、Textの文言をTutorialFeatureのLocalizable.xcstringsへ寄せられます。
+            画像もFeature内に置いておけば、その機能の実装と資産が同じ場所で追えます。
+          </aside>
+        </section>
+
+        <section>
+          <p class="section-tag">Reuse</p>
+          <h2>FeatureとDomainを組み替えて、別の体験を作れる</h2>
+          <div class="mm-building-blocks" aria-label="モジュールを積み木のように組み替える">
+            <div class="mm-block-source">
+              <span>TutorialFeature</span>
+              <span>LoginFeature</span>
+              <span>DesignSystem</span>
+              <span>ContentDomain</span>
+              <span>UserDomain</span>
+            </div>
+            <div class="mm-block-products">
+              <article>
+                <strong>Main App</strong>
+                <span>Feature + Domain + DesignSystem</span>
+              </article>
+              <article>
+                <strong>Widget</strong>
+                <span>Domain + DesignSystem</span>
+              </article>
+              <article>
+                <strong>App Clip</strong>
+                <span>Feature + DesignSystem</span>
+              </article>
+              <article>
+                <strong>Prototype App</strong>
+                <span>必要なブロックだけ</span>
+              </article>
+            </div>
+          </div>
+          <p class="single-message compact">AIにも、小さい単位で依頼しやすくなる。</p>
+          <aside class="notes">
+            再利用は、別アプリでそのまま使えると断定しすぎない方が正確です。
+            ただ、密結合なままよりは取り出しやすくなります。
+            Feature、Domain、DesignSystemを積み木のように扱えるので、Main App、Widget、App Clip、Prototype Appのような別の構成も見通しやすくなります。
+            もうひとつの効き方は、AIへの依頼単位が小さくなることです。
+          </aside>
+        </section>
+
+        <section>
+          <p class="section-tag">Future Shape</p>
+          <h2>Appは組み立て役、FeatureとDomainは一方向に依存する</h2>
+          <svg class="mm-future-graph" viewBox="0 0 1120 560" role="img" aria-label="理想のモジュール構成">
+            <defs>
+              <marker id="mm-arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+                <path d="M 0 0 L 10 5 L 0 10 z"></path>
+              </marker>
+            </defs>
+            <g class="mm-node app" transform="translate(470 30)">
+              <rect width="180" height="70" rx="8" />
+              <text x="90" y="43">App</text>
+            </g>
+            <g class="mm-node feature" transform="translate(100 170)">
+              <rect width="170" height="74" rx="8" />
+              <text x="85" y="33">TutorialFeature</text>
+            </g>
+            <g class="mm-node feature" transform="translate(315 170)">
+              <rect width="170" height="74" rx="8" />
+              <text x="85" y="33">LoginFeature</text>
+            </g>
+            <g class="mm-node feature" transform="translate(530 170)">
+              <rect width="170" height="74" rx="8" />
+              <text x="85" y="33">ContentFeature</text>
+            </g>
+            <g class="mm-node design" transform="translate(775 170)">
+              <rect width="180" height="74" rx="8" />
+              <text x="90" y="33">DesignSystem</text>
+            </g>
+            <g class="mm-node domain" transform="translate(240 360)">
+              <rect width="180" height="74" rx="8" />
+              <text x="90" y="33">ContentDomain</text>
+            </g>
+            <g class="mm-node domain" transform="translate(470 360)">
+              <rect width="180" height="74" rx="8" />
+              <text x="90" y="33">AuthUserDomain</text>
+            </g>
+            <g class="mm-node domain" transform="translate(700 360)">
+              <rect width="180" height="74" rx="8" />
+              <text x="90" y="33">UserDomain</text>
+            </g>
+            <path class="mm-line" d="M 560 100 C 560 135, 185 135, 185 170" />
+            <path class="mm-line" d="M 560 100 C 560 135, 400 135, 400 170" />
+            <path class="mm-line" d="M 560 100 C 560 135, 615 135, 615 170" />
+            <path class="mm-line" d="M 560 100 C 560 135, 865 135, 865 170" />
+            <path class="mm-line" d="M 615 244 C 615 300, 330 300, 330 360" />
+            <path class="mm-line" d="M 615 244 C 615 300, 560 300, 560 360" />
+            <path class="mm-line" d="M 330 434 C 330 490, 790 490, 790 434" />
+            <text class="mm-no-feature" x="560" y="520">Feature同士は直接依存しない。つなぎ込みはAppまたはRouting層へ。</text>
+          </svg>
+          <aside class="notes">
+            理想は、Appが組み立て役になり、FeatureとDomainの依存方向を固定することです。
+            Feature同士は直接依存させず、画面遷移やつなぎ込みはAppかRouting層が担当します。
+            Domainも責務ごとに分け、たとえばContentDomainがUserDomainに依存するのはあり得ても、その逆は避けます。
+            今回はまだDomainまで完全には切っていませんが、目標としてはこの形を目指しています。
+          </aside>
+        </section>
+
+        <section>
+          <p class="section-tag">Summary</p>
+          <h2>Feature + DesignSystemだけでも、十分に効果がある</h2>
+          <div class="mm-summary-blocks" aria-label="モジュール化でよかったこと">
+            <span>Previewが速い</span>
+            <span>依存が見える</span>
+            <span>責務が分かれる</span>
+            <span>リソースが近い</span>
+            <span>再利用しやすい</span>
+          </div>
+          <p class="single-message compact">UIはFeature単位、モデルはDomain単位へ広げると、さらに扱いやすくなる。</p>
+          <aside class="notes">
+            今回の結論は、Previewが速くなるだけでは終わらなかった、ということです。
+            依存が見え、責務が分かれ、リソースの置き場所が近くなり、再利用もしやすくなりました。
+            今後は、UIはFeature単位、モデルはDomain単位へ広げていくと、さらに保守しやすく、AIにも扱いやすい構造になります。
+          </aside>
+        </section>
+      </div>
+    </div>
+
+    <script>
+      import Reveal from 'reveal.js/dist/reveal.esm.js';
+
+      const deck = new Reveal({
+        hash: true,
+        controls: true,
+        progress: true,
+        center: true,
+        transition: 'fade'
+      });
+
+      deck.initialize();
+    </script>
+  </body>
+</html>

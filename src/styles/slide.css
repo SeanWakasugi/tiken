@@ -9,6 +9,619 @@
   --r-heading-text-transform: none;
 }
 
+.section-tag {
+  max-width: 100%;
+  width: fit-content;
+  margin: 0 0 18px;
+  padding: 8px 12px;
+  border: 2px solid #d9ded8;
+  border-radius: 8px;
+  background: #ffffff;
+  color: #16697a;
+  font-size: 14px;
+  font-weight: 900;
+  letter-spacing: 0;
+  text-transform: uppercase;
+  overflow-wrap: anywhere;
+}
+
+.reveal section,
+.reveal section * {
+  box-sizing: border-box;
+}
+
+.reveal section {
+  overflow-wrap: anywhere;
+}
+
+.mm-title-slide {
+  position: relative;
+}
+
+.mm-speed-hero {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 20px;
+  width: min(100%, 1100px);
+  margin: 46px auto 0;
+}
+
+.mm-speed-metric {
+  min-width: 0;
+  display: grid;
+  align-content: center;
+  min-height: 230px;
+  padding: 24px;
+  border: 2px solid #d9ded8;
+  border-radius: 8px;
+  background: #ffffff;
+  text-align: left;
+}
+
+.mm-speed-metric p {
+  margin: 0 0 22px;
+  color: #59666b;
+  font-size: 18px;
+  font-weight: 900;
+}
+
+.mm-speed-metric div {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 8px;
+}
+
+.mm-speed-metric span {
+  color: #59666b;
+  font-size: clamp(30px, 3vw, 38px);
+  font-weight: 900;
+}
+
+.mm-speed-metric b {
+  color: #d96c2c;
+  font-size: 28px;
+  font-weight: 950;
+}
+
+.mm-speed-metric strong {
+  color: #16333a;
+  font-size: clamp(42px, 4.4vw, 58px);
+  font-weight: 950;
+  line-height: 1;
+}
+
+.mm-speed-metric small {
+  margin-top: 18px;
+  color: #16697a;
+  font-size: 20px;
+  font-weight: 900;
+}
+
+.mm-before-flow,
+.mm-preview-scope,
+.mm-feature-box,
+.mm-boundary-compare,
+.mm-design-hub,
+.mm-resource-tree,
+.mm-building-blocks {
+  width: min(100%, 1060px);
+  margin: 40px auto 0;
+}
+
+.mm-before-flow {
+  display: grid;
+  grid-template-columns: minmax(0, 0.95fr) minmax(0, 1.25fr);
+  gap: 26px;
+  align-items: stretch;
+}
+
+.mm-flow-source,
+.mm-module-card,
+.mm-feature-box,
+.mm-boundary-card,
+.mm-app-assets,
+.mm-hub-center,
+.mm-tree,
+.mm-block-products article {
+  min-width: 0;
+  border: 2px solid #d9ded8;
+  border-radius: 8px;
+  background: #ffffff;
+}
+
+.mm-flow-source {
+  display: grid;
+  align-content: center;
+  min-height: 250px;
+  padding: 30px;
+  text-align: left;
+}
+
+.mm-flow-source strong,
+.mm-module-card strong,
+.mm-boundary-card strong,
+.mm-app-assets strong,
+.mm-hub-center strong,
+.mm-block-products strong {
+  color: #16333a;
+  font-size: clamp(24px, 2.6vw, 30px);
+  font-weight: 950;
+  line-height: 1.2;
+}
+
+.mm-flow-chain {
+  display: grid;
+  gap: 12px;
+  align-content: center;
+}
+
+.mm-flow-chain span {
+  position: relative;
+  min-width: 0;
+  display: grid;
+  place-items: center;
+  min-height: 58px;
+  border: 2px solid #d9ded8;
+  border-radius: 8px;
+  background: #ffffff;
+  color: #16333a;
+  font-size: clamp(18px, 2.1vw, 22px);
+  font-weight: 900;
+  line-height: 1.2;
+  text-align: center;
+}
+
+.mm-flow-chain span + span::before {
+  content: "";
+  position: absolute;
+  top: -15px;
+  left: 50%;
+  width: 3px;
+  height: 12px;
+  background: #d96c2c;
+}
+
+.mm-preview-scope {
+  position: relative;
+  min-height: 360px;
+}
+
+.mm-app-frame {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  align-content: start;
+  justify-items: start;
+  padding: 24px;
+  border: 3px dashed #d9ded8;
+  border-radius: 8px;
+  color: #59666b;
+  opacity: 0.72;
+}
+
+.mm-app-frame span {
+  color: #59666b;
+  font-size: 28px;
+  font-weight: 950;
+}
+
+.mm-app-frame small {
+  margin-top: 6px;
+  font-size: 17px;
+  font-weight: 800;
+}
+
+.mm-preview-center {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.8fr);
+  gap: 20px;
+  align-items: stretch;
+  width: min(82%, 820px);
+  margin: 58px auto 0;
+}
+
+.mm-module-card {
+  display: grid;
+  align-content: center;
+  min-height: 210px;
+  padding: 30px;
+  text-align: left;
+}
+
+.mm-module-card.strong {
+  border-color: #16697a;
+  background: #e6f0ed;
+}
+
+.mm-module-card span,
+.mm-boundary-card span,
+.mm-app-assets span,
+.mm-block-products span {
+  margin-top: 12px;
+  color: #59666b;
+  font-size: 20px;
+  font-weight: 800;
+  line-height: 1.35;
+}
+
+.mm-feature-box {
+  display: grid;
+  gap: 18px;
+  padding: 24px;
+  border-color: #16697a;
+  background: #e6f0ed;
+}
+
+.mm-feature-header {
+  color: #16697a;
+  font-size: 22px;
+  font-weight: 950;
+  text-align: left;
+  text-transform: uppercase;
+}
+
+.mm-feature-parts {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.mm-feature-parts span {
+  min-width: 0;
+  display: grid;
+  place-items: center;
+  min-height: 76px;
+  padding: 14px;
+  border: 2px solid #d9ded8;
+  border-radius: 8px;
+  background: #ffffff;
+  color: #16333a;
+  font-size: clamp(20px, 2.4vw, 26px);
+  font-weight: 950;
+  line-height: 1.2;
+  text-align: center;
+}
+
+.mm-feature-box p {
+  margin: 0;
+  color: #16333a;
+  font-size: clamp(24px, 2.8vw, 30px);
+  font-weight: 900;
+  line-height: 1.35;
+}
+
+.mm-boundary-compare {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 22px;
+}
+
+.mm-boundary-card {
+  min-height: 270px;
+  padding: 28px;
+  text-align: left;
+}
+
+.mm-boundary-card.clean {
+  border-color: #16697a;
+  background: #e6f0ed;
+}
+
+.mm-boundary-card div {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+.mm-boundary-card span,
+.mm-boundary-card b {
+  min-width: 0;
+  display: inline-grid;
+  place-items: center;
+  min-height: 40px;
+  padding: 8px 12px;
+  border-radius: 8px;
+  background: #ffffff;
+  color: #16333a;
+  font-size: clamp(15px, 1.8vw, 18px);
+  font-weight: 900;
+  line-height: 1.2;
+  text-align: center;
+}
+
+.mm-boundary-card.messy span {
+  background: #f4f4ee;
+}
+
+.mm-boundary-card b {
+  color: #d96c2c;
+  font-size: 24px;
+}
+
+.mm-design-hub {
+  display: grid;
+  grid-template-columns: 0.8fr 1fr 1.2fr;
+  gap: 20px;
+  align-items: center;
+}
+
+.mm-app-assets,
+.mm-hub-center {
+  display: grid;
+  align-content: center;
+  min-height: 220px;
+  padding: 26px;
+  text-align: left;
+}
+
+.mm-app-assets {
+  background: #fbfbf9;
+  opacity: 0.72;
+}
+
+.mm-hub-center {
+  border-color: #16697a;
+  background: #e6f0ed;
+  text-align: center;
+}
+
+.mm-hub-items {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.mm-hub-items span,
+.mm-block-source span {
+  min-width: 0;
+  display: grid;
+  place-items: center;
+  min-height: 62px;
+  border: 2px solid #d9ded8;
+  border-radius: 8px;
+  background: #ffffff;
+  color: #16333a;
+  font-size: clamp(17px, 1.9vw, 20px);
+  font-weight: 900;
+  line-height: 1.2;
+  text-align: center;
+}
+
+.mm-hub-items span:last-child {
+  grid-column: 1 / -1;
+}
+
+.mm-resource-tree {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 24px;
+  align-items: stretch;
+}
+
+.mm-tree {
+  display: grid;
+  align-content: center;
+  gap: 14px;
+  min-height: 0;
+  padding: 28px;
+  text-align: left;
+}
+
+.mm-tree strong {
+  color: #16697a;
+  font-size: 27px;
+  font-weight: 950;
+}
+
+.mm-tree span {
+  min-width: 0;
+  padding: 10px 14px;
+  border-radius: 8px;
+  background: #f4f4ee;
+  color: #16333a;
+  font: 850 clamp(16px, 1.9vw, 21px)/1.25 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  white-space: normal;
+}
+
+.mm-tree span:not(:first-of-type) {
+  margin-left: 28px;
+}
+
+.mm-building-blocks {
+  display: grid;
+  grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.15fr);
+  gap: 26px;
+  align-items: center;
+}
+
+.mm-block-source {
+  display: grid;
+  gap: 12px;
+}
+
+.mm-block-source span {
+  min-height: 52px;
+}
+
+.mm-block-source span:nth-child(1),
+.mm-block-source span:nth-child(2) {
+  border-color: #16697a;
+}
+
+.mm-block-source span:nth-child(3) {
+  background: #e6f0ed;
+}
+
+.mm-block-products {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.mm-block-products article {
+  display: grid;
+  align-content: center;
+  min-height: 128px;
+  padding: 20px;
+  text-align: left;
+}
+
+.mm-block-products strong {
+  font-size: clamp(20px, 2.2vw, 25px);
+}
+
+.mm-future-graph {
+  width: min(100%, 1120px);
+  margin-top: 26px;
+}
+
+.mm-node rect {
+  fill: #ffffff;
+  stroke: #d9ded8;
+  stroke-width: 3px;
+}
+
+.mm-node.app rect,
+.mm-node.design rect {
+  stroke: #16697a;
+  fill: #e6f0ed;
+}
+
+.mm-node text {
+  fill: #16333a;
+  font-size: 18px;
+  font-weight: 900;
+  text-anchor: middle;
+}
+
+.mm-node text + text {
+  fill: #59666b;
+  font-size: 15px;
+}
+
+.mm-line {
+  fill: none;
+  stroke: #d96c2c;
+  stroke-width: 4px;
+  marker-end: url(#mm-arrow);
+}
+
+.mm-future-graph marker path {
+  fill: #d96c2c;
+}
+
+.mm-no-feature {
+  fill: #59666b;
+  font-size: 18px;
+  font-weight: 800;
+  text-anchor: middle;
+}
+
+.mm-summary-blocks {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 16px;
+  width: min(100%, 1100px);
+  margin: 44px auto 0;
+}
+
+.mm-summary-blocks span {
+  min-width: 0;
+  display: grid;
+  place-items: center;
+  min-height: 76px;
+  padding: 14px;
+  border: 2px solid #d9ded8;
+  border-radius: 8px;
+  background: #ffffff;
+  color: #16333a;
+  font-size: clamp(18px, 2vw, 24px);
+  font-weight: 950;
+  line-height: 1.25;
+  text-align: center;
+}
+
+.mm-summary-blocks span:first-child {
+  border-color: #16697a;
+  background: #e6f0ed;
+}
+
+@media (max-width: 1100px) {
+  .section-tag {
+    font-size: 11px;
+  }
+
+  .mm-speed-hero,
+  .mm-before-flow,
+  .mm-preview-center,
+  .mm-feature-parts,
+  .mm-boundary-compare,
+  .mm-design-hub,
+  .mm-resource-tree,
+  .mm-building-blocks,
+  .mm-summary-blocks {
+    grid-template-columns: 1fr;
+  }
+
+  .mm-speed-metric {
+    min-height: 150px;
+  }
+
+  .mm-speed-metric span {
+    font-size: 36px;
+  }
+
+  .mm-speed-metric strong {
+    font-size: 50px;
+  }
+
+  .mm-preview-scope {
+    min-height: auto;
+  }
+
+  .mm-app-frame {
+    position: static;
+    min-height: 90px;
+    margin-bottom: 14px;
+  }
+
+  .mm-preview-center {
+    width: 100%;
+    margin: 0;
+  }
+
+  .mm-future-graph {
+    max-height: 420px;
+  }
+
+  .mm-speed-hero,
+  .mm-before-flow,
+  .mm-preview-scope,
+  .mm-feature-box,
+  .mm-boundary-compare,
+  .mm-design-hub,
+  .mm-resource-tree,
+  .mm-building-blocks,
+  .mm-summary-blocks {
+    margin-top: 24px;
+  }
+
+  .mm-flow-source,
+  .mm-module-card,
+  .mm-boundary-card,
+  .mm-app-assets,
+  .mm-hub-center,
+  .mm-tree,
+  .mm-block-products article {
+    min-height: 0;
+    padding: 22px;
+  }
+}
+
 .slide-page {
   margin: 0;
   background: #f7f7f2;
